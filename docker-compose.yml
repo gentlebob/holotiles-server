@@ -1,0 +1,26 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis_data:/data
+
+  server:
+    build: ./server2
+    ports:
+      - "4656:4656"
+    volumes:
+      - ./talents:/talents
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  updater:
+    build: ./updater
+    volumes:
+      - ./talents:/app/talents
+
+# volumes:
+  # redis_data:
