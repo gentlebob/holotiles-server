@@ -1,8 +1,10 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 from . import state, store
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.get('/livestreams')
