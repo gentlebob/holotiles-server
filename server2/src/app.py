@@ -15,3 +15,13 @@ def get_livestreams():
         for ls in store.get_livestreams(state.redis_client, channel.id)
     ]
     return jsonify(result)
+
+
+@app.get('/livestreams2')
+def get_livestream2():
+    result = [
+        {'id': ls.id, 'title': ls.title}
+        for channel in state.test_channels
+        for ls in store.get_livestreams(state.redis_client, channel.id)
+    ]
+    return jsonify(result)

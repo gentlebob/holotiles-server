@@ -26,7 +26,7 @@ def _check_loop():
     while True:
         time.sleep(CHECK_INTERVAL)
 
-        for channel in state.channels:
+        for channel in state.channels + state.test_channels:
             livestreams = store.get_livestreams(state.redis_client, channel.id)
             upcoming = store.get_upcoming(state.redis_client, channel.id)
 

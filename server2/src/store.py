@@ -13,6 +13,10 @@ def _upcoming_key(channel_id: str) -> str:
     return f'channel:{channel_id}:upcoming'
 
 
+def _ended_key(channel_id: str) -> str:
+    return f'channel:{channel_id}:ended'
+
+
 def _encode(stream: Livestream) -> str:
     return json.dumps({'id': stream.id, 'title': stream.title, 'url': stream.url})
 
@@ -53,6 +57,15 @@ def get_upcoming(r: redis.Redis, channel_id: str) -> list[Livestream]:
 
 def remove_upcoming(r: redis.Redis, channel_id: str, stream_id: str) -> None:
     r.hdel(_upcoming_key(channel_id), stream_id)
+
+
+def is_ended(r: redis.Redis, channel_id: str, video_id: str) -> bool:
+    return bool(r.sismember(_ended_key(channel_id), video_id))
+
+
+def add_ended(r: redis.Redis, channel_id: str, video_ids: list[str]) -> None:
+    if video_ids:
+        r.sadd(_ended_key(channel_id), *video_ids)
 
 
 def move_upcoming_to_live(r: redis.Redis, channel_id: str, stream_id: str) -> None:

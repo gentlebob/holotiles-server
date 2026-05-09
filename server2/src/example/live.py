@@ -9,11 +9,17 @@ def get_active_livestreams(channel_url):
     if not channel_url.endswith('/streams'):
         channel_url = channel_url.rstrip('/') + '/streams'
 
-    # Configure yt-dlp options
+    # Configure yt-dlp options.
+    # NOTE: 'extract_flat' is intentionally NOT set. Flat extraction of a YouTube
+    # channel /streams tab no longer populates 'live_status' / 'is_live' on entries
+    # (yt-dlp / YouTube response change), so we'd never match anything. Full extraction
+    # is slower but is the only way to reliably tell live from past streams here.
     ydl_opts = {
-        'extract_flat': True,  # Extract metadata only (don't download the video)
         'quiet': True,         # Suppress standard console output
-        'no_warnings': True    # Suppress warnings
+        'no_warnings': True,   # Suppress warnings
+        'skip_download': True, # Metadata only
+        'ignoreerrors': True,  # Don't abort the whole batch if one entry fails
+                               # (some past streams return "We're processing this video")
     }
 
     live_streams = []
@@ -43,7 +49,7 @@ def get_active_livestreams(channel_url):
 # --- Example Usage ---
 if __name__ == "__main__":
     # Example: Lofi Girl's channel, which almost always has an active live stream
-    target_channel = "https://www.youtube.com/channel/UC-hM6YJuNYVAmUWxeIr9FeA" 
+    target_channel = "https://www.youtube.com/@LofiGirl" 
     
     print(f"Checking {target_channel} for active live streams...\n")
     
