@@ -1,13 +1,12 @@
 [project]
-name = "server2"
+name = "poller"
 version = "0.1.0"
-description = "Add your description here"
+description = "YouTube livestream poller — writes live/upcoming streams to Redis."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "flask>=3.0",
-    "flask-cors>=5.0",
     "redis>=5.0",
+    "yt-dlp>=2026.03.17",
 ]
 
 [dependency-groups]

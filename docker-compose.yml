@@ -17,6 +17,16 @@ services:
     depends_on:
       - redis
 
+  poller:
+    build: ./poller
+    restart: unless-stopped
+    volumes:
+      - ./talents:/talents
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
   updater:
     build: ./updater
     volumes:

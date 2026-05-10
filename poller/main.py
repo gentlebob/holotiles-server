@@ -1,11 +1,11 @@
 import logging
 import os
+import threading
 from pathlib import Path
 
 import redis
 
-from src import state
-from src.app import app
+from src import checker, poller, state
 from src.models import Channel
 from src.talents import load_channels
 
@@ -30,13 +30,16 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    logger.info('Starting server...')
+    logger.info('Starting poller...')
     state.redis_client = redis.Redis.from_url(
         os.environ.get('REDIS_URL', 'redis://redis:6379')
     )
     state.channels = load_channels(TALENTS_DIR)
     state.test_channels = TEST_CHANNELS
-    app.run(host='0.0.0.0', port=4656)
+    poller.start()
+    checker.start()
+    # Block forever; poller and checker run in daemon threads.
+    threading.Event().wait()
 
 
 if __name__ == '__main__':
